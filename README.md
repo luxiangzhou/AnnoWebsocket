@@ -42,4 +42,5 @@ public class TestController {
 	}
 }
 </code>
-其中@RequestMapping(value = { "/api/springmvc" })是spring mvc用于get/post的访问，@WSRequestMapping(value = { "/api/websocket" })是仿springmvc @RequestMapping用于websocket的访问。
+其中@RequestMapping(value = { "/api/springmvc" })是spring mvc用于get/post的访问，
+@WSRequestMapping(value = { "/api/websocket" })是仿springmvc @RequestMapping用于websocket的访问。
