@@ -16,3 +16,28 @@ websocket的优越性不言自明，长连接的连接资源（线程资源）�
 可以参照spring mvc注解方式进行访问、返回数据。
 
 ### 4、websocket请求仿springmvc @RequestMapping注解方式访问
+Controller访问例子：
+@RestController
+@RequestMapping(value = { "/api/springmvc" })
+@WSRequestMapping(value = { "/api/websocket" })
+public class TestController {
+	@Autowired
+	private TestService testService;
+
+	@RequestMapping(value = { "/test1" }, method = RequestMethod.GET)
+	@WSRequestMapping(value = { "/test1" })
+	public String test1(String param1) {
+		return testService.helloWebscoket(param1);
+	}
+
+	@RequestMapping(value = { "/test2" }, method = RequestMethod.GET)
+	public String test2(String param1) {
+		return testService.helloWebscoket(param1);
+	}
+
+	@RequestMapping(value = { "/test3" }, method = RequestMethod.GET)
+	public String test3(String param1) {
+		return testService.helloWebscoket(param1);
+	}
+}
+其中@RequestMapping(value = { "/api/springmvc" })是spring mvc用于get/post的访问，@WSRequestMapping(value = { "/api/websocket" })是仿springmvc @RequestMapping用于websocket的访问。
