@@ -20,6 +20,11 @@ public class TestController {
 	@Autowired
 	private TestService testService;
 
+	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
+	public String test() {
+		return "test";
+	}
+
 	@RequestMapping(value = { "/test1" }, method = RequestMethod.GET)
 	@WSRequestMapping(value = { "/test1" })
 	public String test1(String param1) {
@@ -35,4 +40,5 @@ public class TestController {
 	public String test3(String param1) {
 		return testService.helloWebscoket(param1);
 	}
+
 }

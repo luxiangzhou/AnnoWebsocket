@@ -28,5 +28,5 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path="src/main/webapp"/>
+	<classpathentry kind="output" path="target/AnnoWebsocket"/>
 </classpath>
