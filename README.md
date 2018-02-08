@@ -17,6 +17,7 @@ websocket的优越性不言自明，长连接的连接资源（线程资源）�
 
 ### 4、websocket请求仿springmvc @RequestMapping注解方式访问
 Controller访问例子：
+<code>
 @RestController
 @RequestMapping(value = { "/api/springmvc" })
 @WSRequestMapping(value = { "/api/websocket" })
@@ -40,4 +41,5 @@ public class TestController {
 		return testService.helloWebscoket(param1);
 	}
 }
+</code>
 其中@RequestMapping(value = { "/api/springmvc" })是spring mvc用于get/post的访问，@WSRequestMapping(value = { "/api/websocket" })是仿springmvc @RequestMapping用于websocket的访问。
