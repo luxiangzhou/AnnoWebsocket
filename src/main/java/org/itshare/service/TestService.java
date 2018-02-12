@@ -10,6 +10,6 @@ public class TestService {
 		if (StringUtils.isNoneBlank(parm)) {
 			result = parm + "!";
 		}
-		return "Hello Websocket! " + result;
+		return "Hi, " + result;
 	}
 }

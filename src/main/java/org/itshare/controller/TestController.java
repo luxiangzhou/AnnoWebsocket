@@ -22,8 +22,8 @@ public class TestController {
 
 	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
 	@WSRequestMapping(value = { "/test" })
-	public String test(String param1) {
-		return testService.helloWebscoket(param1);
+	public String test(String param) {
+		return testService.helloWebscoket(param);
 	}
 
 }

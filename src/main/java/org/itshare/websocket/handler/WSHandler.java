@@ -113,13 +113,13 @@ public class WSHandler implements WebSocketHandler {
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
 		LOGGER.info("AnnoWebsocket handleTransportError");
-
+		WSUtils.removeWsSession(session.getUri().toString());
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 		LOGGER.info("AnnoWebsocket afterConnectionClosed");
-
+		WSUtils.removeWsSession(session.getUri().toString());
 	}
 
 	@Override

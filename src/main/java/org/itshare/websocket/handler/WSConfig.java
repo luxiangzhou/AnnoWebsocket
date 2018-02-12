@@ -1,7 +1,6 @@
 package org.itshare.websocket.handler;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -20,13 +19,16 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 @Configuration
 @EnableWebMvc
 @EnableWebSocket
-@ComponentScan
 public class WSConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(wsHandler(), "/anno/api/websocket/*").addInterceptors(wsInterceptor())
-				.setAllowedOrigins("*");
+		// 允许连接的域,只能以http或https开头
+		String[] allowsOrigins = { "*" };
+
+		// WebSocket通道：注意需要加*，没有*则要和websocket请求一致
+		registry.addHandler(wsHandler(), "/api/websocket/*").setAllowedOrigins(allowsOrigins)
+				.addInterceptors(wsInterceptor());
 	}
 
 	@Bean

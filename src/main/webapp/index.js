@@ -1,7 +1,7 @@
 var websocket = null;
 //判断当前浏览器是否支持WebSocket
 if ('WebSocket' in window) {
-    websocket = new WebSocket("ws://localhost:8080"+projectPath+"/api/websocket/test");
+    websocket = new WebSocket("ws://"+projectPath+"/api/websocket/test");
 } else {
     alert('当前浏览器 Not support websocket')
 }
@@ -49,8 +49,8 @@ $(".ajax button").click(function(){
 	var message = $(".ajax input").val();
 	$.ajax({
 	   type: "GET",
-	   url: projectPath+"/api/springmvc/test",
-	   data: message,
+	   url: "http://"+projectPath+"/api/springmvc/test",
+	   data: {"param":message},
 	   success: function(msg){
 		    $(".ajax").append("<div style='color:red;'>"+msg+"</div>");
 	   }

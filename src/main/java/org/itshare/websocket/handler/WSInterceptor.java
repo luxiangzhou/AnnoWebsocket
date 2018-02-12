@@ -28,7 +28,7 @@ public class WSInterceptor implements HandshakeInterceptor {
 		if (uri.toString().contains(WSConstant.WS_URL_REG)) {
 			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
