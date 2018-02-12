@@ -17,6 +17,9 @@ websocket的优越性不言自明，长连接的连接资源（线程资源）�
 
 ### 4、自定义注解 @WSRequestMapping
 使用@WSRequestMapping注解，让websocket请求类似于springmvc @RequestMapping注解方式访问
+
+![ws]($res/ws.jpg)
+
 #### 4.1Controller访问例子
 
 ```
