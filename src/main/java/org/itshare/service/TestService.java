@@ -5,11 +5,13 @@ import org.springframework.stereotype.Service;
 
 @Service("testService")
 public class TestService {
-	public String helloWebscoket(String parm) {
+	public String helloWebscoket(String param) {
 		String result = "";
-		if (StringUtils.isNoneBlank(parm)) {
-			result = parm + "!";
+		if (StringUtils.isNoneBlank(param)) {
+			result = "Hi, " + param + "!";
+		} else {
+			result = "No Data!";
 		}
-		return "Hi, " + result;
+		return result;
 	}
 }
