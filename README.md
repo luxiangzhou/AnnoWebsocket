@@ -18,9 +18,11 @@ websocket的优越性不言自明，长连接的连接资源（线程资源）�
 ### 4、自定义注解 @WSRequestMapping
 使用@WSRequestMapping注解，让websocket请求类似于springmvc @RequestMapping注解方式访问
 
+#### 4.1浏览器访问例子
+在浏览器中打开：IP:端口/项目名
 ![ws](ws.jpg)
 
-#### 4.1Controller访问例子
+#### 4.2Controller访问例子
 
 ```
 @RestController
@@ -42,7 +44,7 @@ public class TestController {
 其中@RequestMapping(value = { "/api/springmvc" })是spring mvc用于get/post的访问，
 @WSRequestMapping(value = { "/api/websocket" })是仿springmvc @RequestMapping用于websocket的访问。
 
-#### 4.2大体思想
+#### 4.3大体思想
 1. 先写一个@WSRequestMapping注解用于写在类和方法上面；
 
 ```
