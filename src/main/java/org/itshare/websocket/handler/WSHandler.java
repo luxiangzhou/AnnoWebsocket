@@ -33,12 +33,13 @@ public class WSHandler implements WebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		// TODO Auto-generated method stub
+		LOGGER.info("AnnoWebsocket afterConnectionEstablished");
 
 	}
 
 	@Override
 	public void handleMessage(final WebSocketSession session, final WebSocketMessage<?> message) throws Exception {
+		LOGGER.info("AnnoWebsocket handleMessage begin ....");
 		EXECUTOR_SERVICE.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -49,6 +50,7 @@ public class WSHandler implements WebSocketHandler {
 				}
 			}
 		});
+		LOGGER.info("AnnoWebsocket handleMessage end!");
 	}
 
 	private void handle(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
@@ -90,19 +92,19 @@ public class WSHandler implements WebSocketHandler {
 
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-		// TODO Auto-generated method stub
+		LOGGER.info("AnnoWebsocket handleTransportError");
 
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-		// TODO Auto-generated method stub
+		LOGGER.info("AnnoWebsocket afterConnectionClosed");
 
 	}
 
 	@Override
 	public boolean supportsPartialMessages() {
-		// TODO Auto-generated method stub
+		LOGGER.info("AnnoWebsocket supportsPartialMessages");
 		return false;
 	}
 
