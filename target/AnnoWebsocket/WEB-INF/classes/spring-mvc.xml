@@ -27,5 +27,7 @@
 			</bean>
 			
 			<!-- 静态资源访问 -->  
-  			<mvc:default-servlet-handler/>  
+  			<!-- <mvc:default-servlet-handler/>   -->
+  			<!-- 访问静态资源 -->
+     		<mvc:resources location="/" mapping="/**"/>
 </beans>

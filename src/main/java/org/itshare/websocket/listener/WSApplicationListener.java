@@ -64,7 +64,7 @@ public class WSApplicationListener implements ApplicationListener<ContextRefresh
 								String[] methodWsUrls = methodAnno.value();
 								for (String methodWsUrl : methodWsUrls) {
 									WSRequestMappingBean clazzBean = new WSRequestMappingBean();
-									clazzBean.setBean(clazzBean);
+									clazzBean.setBean(bean);
 									clazzBean.setClazzWsUrl(clazzWsUrl);
 									clazzBean.setMethod(method);
 									clazzBean.setMethodWsUrl(methodWsUrl);

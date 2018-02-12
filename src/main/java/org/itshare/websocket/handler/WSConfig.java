@@ -25,7 +25,8 @@ public class WSConfig extends WebMvcConfigurerAdapter implements WebSocketConfig
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(wsHandler(), "/anno/api/websocket").addInterceptors(wsInterceptor()).setAllowedOrigins("*");
+		registry.addHandler(wsHandler(), "/anno/api/websocket/*").addInterceptors(wsInterceptor())
+				.setAllowedOrigins("*");
 	}
 
 	@Bean

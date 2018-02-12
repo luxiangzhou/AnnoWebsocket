@@ -14,7 +14,7 @@
 </head>
 <body>
 	<div class="bd">
-		<div class="item aja">
+		<div class="item ajax">
 			<span class="title">Ajax访问：</span>
 			<span><input type="text" value="Hello Ajax!"/></span>
 	    	<span><button>发送消息</button></span>

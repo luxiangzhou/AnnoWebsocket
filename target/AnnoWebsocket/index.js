@@ -38,8 +38,21 @@ function closeWebSocket() {
     websocket.close();
 }
 
-//发送消息
+//websocket发送消息
 $(".ws button").click(function(){
 	var message = $(".ws input").val();
     websocket.send(message);
+});
+
+//ajax发送消息
+$(".ajax button").click(function(){
+	var message = $(".ajax input").val();
+	$.ajax({
+	   type: "GET",
+	   url: projectPath+"/api/springmvc/test",
+	   data: message,
+	   success: function(msg){
+		    $(".ajax").append("<div style='color:red;'>"+msg+"</div>");
+	   }
+	});
 });

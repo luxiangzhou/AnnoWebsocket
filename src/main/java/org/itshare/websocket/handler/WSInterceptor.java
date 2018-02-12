@@ -1,9 +1,11 @@
 package org.itshare.websocket.handler;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.itshare.websocket.constant.WSConstant;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.socket.WebSocketHandler;
@@ -22,7 +24,11 @@ public class WSInterceptor implements HandshakeInterceptor {
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
 		LOGGER.info("AnnoWebsocket before handshake ...");
-		return false;
+		URI uri = request.getURI();
+		if (uri.toString().contains(WSConstant.WS_URL_REG)) {
+			return true;
+		}
+		return true;
 	}
 
 	@Override

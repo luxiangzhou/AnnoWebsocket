@@ -31,10 +31,13 @@ public class WSHandler implements WebSocketHandler {
 	// 线程池
 	public static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUM);
 
+	/**
+	 * websocket连接后保存session
+	 */
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		LOGGER.info("AnnoWebsocket afterConnectionEstablished");
-
+		WSUtils.putWsSession(session.getUri().toString(), session);
 	}
 
 	@Override
@@ -59,7 +62,6 @@ public class WSHandler implements WebSocketHandler {
 		String wsUrl = uri.toString();
 		// websocket message
 		String wsMessage = (String) message.getPayload();
-		JSONObject jsonObject = JSONObject.fromObject(wsMessage);
 
 		// 反射调用业务方法，并将业务方法返回的数据返回给websocket
 		if (WSConstant.WS_CLAZZ_MAP.containsKey(wsUrl)) {
@@ -67,16 +69,34 @@ public class WSHandler implements WebSocketHandler {
 			Object bean = wsBean.getBean();
 			// 方法
 			Method wsBeanMethod = wsBean.getMethod();
+
 			// 方法参数
 			Class<?>[] parameterTypes = wsBeanMethod.getParameterTypes();
 			LocalVariableTableParameterNameDiscoverer paramterDiscover = new LocalVariableTableParameterNameDiscoverer();
 			String[] parameterNames = paramterDiscover.getParameterNames(wsBeanMethod);
 			Object[] args = new Object[parameterTypes.length];
+
+			// websocket message值
+			JSONObject jsonObject = null;
+			boolean isJSON = false;
+			try {
+				jsonObject = JSONObject.fromObject(wsMessage);
+				isJSON = true;
+			} catch (Exception e) {
+				isJSON = false;
+			}
+
 			for (int i = 0; i < parameterTypes.length; i++) {
 				Class<?> pClazz = parameterTypes[i];
 				Object pValue = null;
-				if ("java.lang.String".equals(pClazz.getName()) || "java.lang.Booealn".equals(pClazz.getName())
-						|| "boolean".equals(pClazz.getName()) || "int".equals(pClazz.getName())) {
+				if ("java.lang.String".equals(pClazz.getName())) {
+					if (isJSON) {
+						pValue = jsonObject.get(parameterNames[i]);
+					} else {
+						pValue = wsMessage;
+					}
+				} else if ("java.lang.Booealn".equals(pClazz.getName()) || "boolean".equals(pClazz.getName())
+						|| "int".equals(pClazz.getName())) {
 					pValue = jsonObject.get(parameterNames[i]);
 				} else {
 					pValue = JSONObject.toBean(jsonObject, pClazz);
@@ -84,9 +104,9 @@ public class WSHandler implements WebSocketHandler {
 				args[i] = pValue;
 			}
 			// 反射调用业务方法
-			Object resObj = wsBean.getMethod().invoke(bean, args);
+			Object resObj = wsBeanMethod.invoke(bean, args);
 			// 将业务方法返回的数据返回给websocket
-
+			WSUtils.sendMessage(wsUrl, resObj.toString());
 		}
 	}
 
