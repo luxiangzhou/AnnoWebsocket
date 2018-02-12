@@ -17,7 +17,10 @@ public class WSConstant {
 	 */
 	public static final String WS_SCAN_PACKAGE = "org.itshare";
 
-	public static final String WS_URL_REG = "/api/websocket/";
+	/**
+	 * websocket mvc注解扫描url开始段
+	 */
+	public static final String WS_URL_REG = "/api/websocket";
 
 	/**
 	 * websocket mvc注解扫描获得的注解对象

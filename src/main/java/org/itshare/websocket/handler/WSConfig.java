@@ -1,5 +1,6 @@
 package org.itshare.websocket.handler;
 
+import org.itshare.websocket.constant.WSConstant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -27,7 +28,7 @@ public class WSConfig extends WebMvcConfigurerAdapter implements WebSocketConfig
 		String[] allowsOrigins = { "*" };
 
 		// WebSocket通道：注意需要加*，没有*则要和websocket请求一致
-		registry.addHandler(wsHandler(), "/api/websocket/*").setAllowedOrigins(allowsOrigins)
+		registry.addHandler(wsHandler(), WSConstant.WS_URL_REG + "*").setAllowedOrigins(allowsOrigins)
 				.addInterceptors(wsInterceptor());
 	}
 
