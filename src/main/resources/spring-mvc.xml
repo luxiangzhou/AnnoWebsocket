@@ -26,4 +26,6 @@
 				<property name="suffix" value=".jsp"></property>
 			</bean>
 			
+			<!-- 静态资源访问 -->  
+  			<mvc:default-servlet-handler/>  
 </beans>

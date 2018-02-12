@@ -1,0 +1,23 @@
+body{
+	background:#F5F6F7;
+}
+.bd{
+	width:700px;
+	margin:50px auto auto auto;
+	padding:20px;
+	background:#FFF;
+}
+.item{
+	height:200px;
+}
+.item-request{
+	height:30px;
+}
+.title{
+	text-align:right;
+	display: inline-block;
+	    width: 200px;
+}
+.cont{
+	font-color:red;
+}

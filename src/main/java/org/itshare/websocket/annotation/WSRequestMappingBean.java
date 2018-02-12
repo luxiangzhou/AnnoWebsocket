@@ -53,11 +53,4 @@ public class WSRequestMappingBean {
 	public void setMethodWsUrl(String methodWsUrl) {
 		this.methodWsUrl = methodWsUrl;
 	}
-
-	@Override
-	public String toString() {
-		return "WSRequestMappingBean [bean=" + bean + ", clazzWsUrl=" + clazzWsUrl + ", method=" + method
-				+ ", methodWsUrl=" + methodWsUrl + "]";
-	}
-
 }

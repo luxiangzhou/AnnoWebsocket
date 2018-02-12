@@ -21,23 +21,8 @@ public class TestController {
 	private TestService testService;
 
 	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
-	public String test() {
-		return "test";
-	}
-
-	@RequestMapping(value = { "/test1" }, method = RequestMethod.GET)
-	@WSRequestMapping(value = { "/test1" })
-	public String test1(String param1) {
-		return testService.helloWebscoket(param1);
-	}
-
-	@RequestMapping(value = { "/test2" }, method = RequestMethod.GET)
-	public String test2(String param1) {
-		return testService.helloWebscoket(param1);
-	}
-
-	@RequestMapping(value = { "/test3" }, method = RequestMethod.GET)
-	public String test3(String param1) {
+	@WSRequestMapping(value = { "/test" })
+	public String test(String param1) {
 		return testService.helloWebscoket(param1);
 	}
 

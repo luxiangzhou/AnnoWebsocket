@@ -72,7 +72,7 @@ public class WSApplicationListener implements ApplicationListener<ContextRefresh
 									String wsUrl = event.getApplicationContext().getApplicationName() + clazzWsUrl
 											+ methodWsUrl;
 									WSConstant.WS_CLAZZ_MAP.put(wsUrl, clazzBean);
-									LOGGER.info("AnnoWebsocket Bean-" + (beanIndex++) + ":" + wsUrl + ", " + clazzBean);
+									LOGGER.info("AnnoWebsocket Bean-" + (beanIndex++) + ":" + wsUrl);
 								}
 							}
 						}
