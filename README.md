@@ -15,7 +15,8 @@ websocket的优越性不言自明，长连接的连接资源（线程资源）�
 在实际开发中websocket请求到controller层按照websocket原生态方式访问还是比较麻烦的，
 可以参照spring mvc注解方式进行访问、返回数据。
 
-### 4、websocket请求用自定义注解方式访问，类似于springmvc @RequestMapping注解方式访问
+### 4、自定义注解 @WSRequestMapping
+使用@WSRequestMapping注解，让websocket请求类似于springmvc @RequestMapping注解方式访问
 #### 4.1Controller访问例子
 
 ```
