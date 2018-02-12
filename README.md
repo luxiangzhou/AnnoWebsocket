@@ -26,21 +26,12 @@ public class TestController {
 	@Autowired
 	private TestService testService;
 
-	@RequestMapping(value = { "/test1" }, method = RequestMethod.GET)
-	@WSRequestMapping(value = { "/test1" })
-	public String test1(String param1) {
-		return testService.helloWebscoket(param1);
+	@RequestMapping(value = { "/test" }, method = RequestMethod.GET)
+	@WSRequestMapping(value = { "/test" })
+	public String test(String param) {
+		return testService.helloWebscoket(param);
 	}
 
-	@RequestMapping(value = { "/test2" }, method = RequestMethod.GET)
-	public String test2(String param1) {
-		return testService.helloWebscoket(param1);
-	}
-
-	@RequestMapping(value = { "/test3" }, method = RequestMethod.GET)
-	public String test3(String param1) {
-		return testService.helloWebscoket(param1);
-	}
 }
 ```
 
@@ -49,6 +40,164 @@ public class TestController {
 
 #### 4.2大体思想
 1. 先写一个@WSRequestMapping注解用于写在类和方法上面；
+
+```
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
+public @interface WSRequestMapping {
+	public abstract String[] value();
+}
+```
+
 2. 项目启动的时候扫描所有的@WSRequestMapping注解，将扫描到的@WSRequestMapping注解及对应的类、方法保存到一个Map里面；
+
+```
+public class WSApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+	private static final Log LOGGER = LogFactory.getLog(WSApplicationListener.class);
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		ApplicationContext context = event.getApplicationContext();
+		// 判断不为空，防止进来两次；保证spring启动好了再扫描WSRequestMapping注解
+		if (event != null && context.getParent() != null) {
+			LOGGER.info("AnnoWebsocket mvc注解扫描 begin...");
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+			long beginTime = new Date().getTime();
+			LOGGER.info("begin time : " + dateFormatter.format(new Date()));
+
+			Set<Class<?>> clazzs = getClasses(WSConstant.WS_SCAN_PACKAGE);
+			int beanIndex = 1;
+			for (Class<?> clazz : clazzs) {
+				boolean annoFlag = clazz.isAnnotationPresent(WSRequestMapping.class);
+				if (annoFlag) {
+					// 从spring容器里面获取bean，不要自己反射获取bean,因为自己反射获取的bean中的注解对象是null，比如controller里面的注解获取的service为null
+					Object bean = context.getBean(clazz);
+					Class<?> beanClazz = bean.getClass();
+					// 获取类上WSRequestMapping注解url
+					WSRequestMapping clazzAnno = clazz.getAnnotation(WSRequestMapping.class);
+					String[] clazzWsUrls = clazzAnno.value();
+					for (String clazzWsUrl : clazzWsUrls) {
+						// 获取方法上WSRequestMapping注解url
+						Method[] methodAnnos = beanClazz.getDeclaredMethods();
+						for (int i = 0; i < methodAnnos.length; i++) {
+							Method method = methodAnnos[i];
+							WSRequestMapping methodAnno = method.getAnnotation(WSRequestMapping.class);
+							if (methodAnno != null) {
+								String[] methodWsUrls = methodAnno.value();
+								for (String methodWsUrl : methodWsUrls) {
+									WSRequestMappingBean clazzBean = new WSRequestMappingBean();
+									clazzBean.setBean(bean);
+									clazzBean.setClazzWsUrl(clazzWsUrl);
+									clazzBean.setMethod(method);
+									clazzBean.setMethodWsUrl(methodWsUrl);
+									// 使用ApplicationContext获取项目根目录
+									String wsUrl = event.getApplicationContext().getApplicationName() + clazzWsUrl
+											+ methodWsUrl;
+									WSConstant.WS_CLAZZ_MAP.put(wsUrl, clazzBean);
+									LOGGER.info("AnnoWebsocket Bean-" + (beanIndex++) + ":" + wsUrl);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			long endTime = new Date().getTime();
+			LOGGER.info("end time : " + dateFormatter.format(new Date()));
+			LOGGER.info("总耗时 : " + (endTime - beginTime) + "ms");
+			LOGGER.info("AnnoWebsocket mvc注解扫描 done!");
+		}
+
+	}
+	...
+}
+```
+
 3. 用拦截器拦截websocket请求，到Map里面查看是否有这个websocket请求，有这个webscoket请求就用反射调用controlller层类、方法；
+
+```
+public class WSHandler implements WebSocketHandler {
+	...
+
+	@Override
+	public void handleMessage(final WebSocketSession session, final WebSocketMessage<?> message) throws Exception {
+		LOGGER.info("AnnoWebsocket handleMessage begin ....");
+		EXECUTOR_SERVICE.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					handle(session, message);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		LOGGER.info("AnnoWebsocket handleMessage end!");
+	}
+
+	private void handle(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+		// websocket url
+		URI uri = session.getUri();
+		String wsUrl = uri.toString();
+		// websocket message
+		String wsMessage = (String) message.getPayload();
+
+		// 反射调用业务方法，并将业务方法返回的数据返回给websocket
+		if (WSConstant.WS_CLAZZ_MAP.containsKey(wsUrl)) {
+			WSRequestMappingBean wsBean = WSConstant.WS_CLAZZ_MAP.get(wsUrl);
+			Object bean = wsBean.getBean();
+			// 方法
+			Method wsBeanMethod = wsBean.getMethod();
+
+			// 方法参数
+			Class<?>[] parameterTypes = wsBeanMethod.getParameterTypes();
+			LocalVariableTableParameterNameDiscoverer paramterDiscover = new LocalVariableTableParameterNameDiscoverer();
+			String[] parameterNames = paramterDiscover.getParameterNames(wsBeanMethod);
+			Object[] args = new Object[parameterTypes.length];
+
+			// websocket message值
+			JSONObject jsonObject = null;
+			boolean isJSON = false;
+			try {
+				jsonObject = JSONObject.fromObject(wsMessage);
+				isJSON = true;
+			} catch (Exception e) {
+				isJSON = false;
+			}
+
+			for (int i = 0; i < parameterTypes.length; i++) {
+				Class<?> pClazz = parameterTypes[i];
+				Object pValue = null;
+				if ("java.lang.String".equals(pClazz.getName())) {
+					if (isJSON) {
+						pValue = jsonObject.get(parameterNames[i]);
+					} else {
+						pValue = wsMessage;
+					}
+				} else if ("java.lang.Booealn".equals(pClazz.getName()) || "boolean".equals(pClazz.getName())
+						|| "int".equals(pClazz.getName())) {
+					pValue = jsonObject.get(parameterNames[i]);
+				} else {
+					pValue = JSONObject.toBean(jsonObject, pClazz);
+				}
+				args[i] = pValue;
+			}
+			// 反射调用业务方法
+			Object resObj = wsBeanMethod.invoke(bean, args);
+			// 将业务方法返回的数据返回给websocket
+			WSUtils.sendMessage(wsUrl, resObj.toString());
+		}
+	}
+	...
+}
+```
+
 4. 最后返回数据到前端websocket。
+
+```
+// 将业务方法返回的数据返回给websocket
+WSUtils.sendMessage(wsUrl, resObj.toString());
+```
+
+### 5 Spring @MessageMapping
+后来发现Spring对于WebSocket请求也做了封装，提供了一个@MessageMapping注解，功能类似@RequestMapping，它是存在于Controller中的，定义一个消息的基本请求，功能也跟@RequestMapping类似。
+
