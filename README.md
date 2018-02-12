@@ -1,5 +1,5 @@
 # AnnoWebsocket
-websocket请求用自定义注解方式访问，类似于springmvc @RequestMapping注解方式访问。
+websocket请求用自定义注解@WSRequestMapping访问，类似springmvc @RequestMapping访问。
  源码github地址：[https://github.com/luxiangzhou/AnnoWebsocket](https://github.com/luxiangzhou/AnnoWebsocket)
 ### 1、ajax长轮询
 web异步请求一般用ajax实现，但是如果后端请求返回时间慢，而web异步请求又非常多，如果浏览器有超过6个ajax请求不能返回处于pending状态，就会导致浏览器卡死。这时又想有多个异步请求同时发出，又不想浏览器卡死，可以让后端立马返回一个token给ajax，然后js定时循环掉直到返回数据，这样可以保证请求不在pending状态，浏览器不会卡死。用token方式可以解决浏览器请求过多问题，但是还是要先返回token、还要轮询，很是麻烦，也不是真正的异步解决方法。可以用websocket代替。
@@ -199,6 +199,6 @@ public class WSHandler implements WebSocketHandler {
 WSUtils.sendMessage(wsUrl, resObj.toString());
 ```
 
-### 5 Spring @MessageMapping
+### 5、Spring @MessageMapping
 后来发现Spring对于WebSocket请求也做了封装，提供了一个@MessageMapping注解，功能类似@RequestMapping，它是存在于Controller中的，定义一个消息的基本请求，功能也跟@RequestMapping类似。
 
